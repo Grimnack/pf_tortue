@@ -12,7 +12,8 @@ type Config = (EtatTortue -- État initial de la tortue
               ,Float      -- Facteur d’échelle
               ,Float      -- Angle pour les rotations de la tortue
               ,[Symbole]) -- Liste des symboles compris par la tortue
-
+type EtatDessin = (EtatTortue, Path)              
+       
 --Question 1
 motSuivant :: Regles -> Mot -> Mot
 motSuivant f [] = []
@@ -57,7 +58,30 @@ symbolesTortue (_,_,_,_,a) = a
 avance :: Config -> EtatTortue -> EtatTortue
 avance conf ((x,y),cap) = ((x+(longueurPas conf)*(cos cap),y+(longueurPas conf)*(sin cap)),cap)
 
+--Question 6
+tourneAGauche :: Config -> EtatTortue -> EtatTortue
+tourneAGauche conf (point,cap) = (point,(cap + angle conf))
 
+tourneADroite :: Config -> EtatTortue -> EtatTortue
+tourneADroite conf (point,cap) = (point,(cap - angle conf))
+
+--Question 7
+filtreSymbolesTortue :: Config -> Mot -> Mot
+filtreSymbolesTortue _ [] = []
+filtreSymbolesTortue conf (x:xs) = if any ((==) x) (symbolesTortue conf) then
+								   		x:filtreSymbolesTortue conf xs
+								   else 
+								   		filtreSymbolesTortue conf xs
+--Question 8
+interpreteSymbole :: Config -> EtatDessin -> Symbole -> EtatDessin						 
+interpreteSymbole conf (etat,path) 'F' = (avance conf etat,(fst (avance conf etat)):path)
+interpreteSymbole conf (etat,path) '+' = (tourneAGauche conf etat,(fst (tourneAGauche conf etat)):path)
+interpreteSymbole conf (etat,path) '-' = (tourneADroite conf etat,(fst (tourneADroite conf etat)):path)
+
+
+--Question 9
+interpreteMot :: Config -> Mot -> Picture
+interpreteMot conf mot = 
 
 
 
